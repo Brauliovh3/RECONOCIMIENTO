@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="HELMET AI - Sistema inteligente de clasificación visual de implementos de seguridad."
+    >
+
+    <meta
+        name="theme-color"
+        content="#05080c"
+    >
+
+    <title>HELMET AI | SENATI</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- ONNX Runtime Web -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js">
+    </script>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+        <header class="top-header">
+
+            <div class="brand-area">
+
+                <div class="brand-icon">
+                    AI
+                </div>
+
+                <div>
+                    <div class="brand-title">
+                        HELMET <span>AI</span>
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Sistema inteligente de seguridad
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="senati-header">
+
+                <img
+                    src="assets/logo.png"
+                    alt="SENATI"
+                    class="senati-logo-header"
+                >
+
+                <div class="senati-text">
+                    <strong>SENATI</strong>
+                    <span>Ingeniería de Software e IA</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             MAIN
+        ====================================================== -->
+        <main class="main-container">
+
+            <!-- =================================================
+                 CAMERA + ANALYSIS
+            ================================================== -->
+            <section class="analysis-layout">
+
+                <!-- CAMERA -->
+                <div class="camera-column">
+
+                    <div class="section-label">
+                        <span class="status-dot"></span>
+                        DETECCIÓN EN TIEMPO REAL
+                    </div>
+
+
+                    <div
+                        class="camera-container"
+                        id="cameraContainer"
+                    >
+
+                        <video
+                            id="video"
+                            autoplay
+                            playsinline
+                            muted
+                        ></video>
+
+                        <canvas id="overlay"></canvas>
+
+
+                        <!-- Logo SENATI dentro de cámara -->
+                        <div class="camera-brand">
+
+                            <img
+                                src="assets/logo.png"
+                                alt="SENATI"
+                            >
+
+                            <span>SENATI</span>
+
+                        </div>
+
+
+                        <!-- HUD superior -->
+                        <div class="camera-hud-top">
+
+                            <span id="cameraStatus">
+                                CÁMARA INACTIVA
+                            </span>
+
+                            <span id="fpsCounter">
+                                0 FPS
+                            </span>
+
+                        </div>
+
+
+                        <!-- Holograma -->
+                        <div
+                            class="hologram"
+                            id="hologram"
+                        >
+
+                            <div class="scan-line"></div>
+
+                            <div class="corner top-left"></div>
+                            <div class="corner top-right"></div>
+                            <div class="corner bottom-left"></div>
+                            <div class="corner bottom-right"></div>
+
+                            <div class="hologram-center">
+
+                                <div class="target-ring"></div>
+
+                                <div
+                                    class="target-icon"
+                                    id="targetIcon"
+                                >
+                                    AI
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="tracking-label"
+                                id="trackingLabel"
+                            >
+                                ESCANEANDO
+                            </div>
+
+                        </div>
+
+
+                        <!-- Consejo flotante -->
+                        <div
+                            class="camera-advice"
+                            id="cameraAdvice"
+                        >
+                            Inicia la cámara para comenzar el análisis.
+                        </div>
+
+
+                        <!-- Overlay inicial -->
+                        <div
+                            class="camera-placeholder"
+                            id="cameraPlaceholder"
+                        >
+
+                            <div class="placeholder-icon">
+                                ◉
+                            </div>
+
+                            <strong>
+                                CÁMARA LISTA
+                            </strong>
+
+                            <span>
+                                Presiona "Iniciar cámara"
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Controles -->
+                    <div class="camera-controls">
+
+                        <button
+                            id="startButton"
+                            class="btn btn-primary"
+                            type="button"
+                        >
+                            <span>▶</span>
+                            Iniciar cámara
+                        </button>
+
+                        <button
+                            id="stopButton"
+                            class="btn btn-danger"
+                            type="button"
+                            disabled
+                        >
+                            <span>■</span>
+                            Detener
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="camera-note"
+                        id="cameraNote"
+                    >
+                        La IA procesa la imagen directamente en tu navegador.
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ANALYSIS PANEL
+                ================================================== -->
+                <aside class="analysis-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                ANÁLISIS IA
+                            </span>
+
+                            <h1>
+                                Resultado
+                            </h1>
+
+                        </div>
+
+                        <div
+                            class="live-indicator"
+                            id="liveIndicator"
+                        >
+                            <span></span>
+                            OFFLINE
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESULTADO -->
+                    <div
+                        class="result-card state-neutral"
+                        id="resultCard"
+                    >
+
+                        <div class="result-top">
+
+                            <div
+                                class="result-icon"
+                                id="resultIcon"
+                            >
+                                AI
+                            </div>
+
+                            <div>
+
+                                <span class="result-label">
+                                    ESTADO ACTUAL
+                                </span>
+
+                                <h2 id="resultState">
+                                    SIN ANALIZAR
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <p
+                            class="result-message"
+                            id="resultMessage"
+                        >
+                            Inicia la cámara para comenzar la detección.
+                        </p>
+
+
+                        <!-- CONFIDENCE -->
+                        <div class="confidence-section">
+
+                            <div class="confidence-header">
+
+                                <span>
+                                    NIVEL DE CONFIANZA
+                                </span>
+
+                                <strong id="confidenceValue">
+                                    0.0%
+                                </strong>
+
+                            </div>
+
+                            <div class="confidence-bar">
+
+                                <div
+                                    id="confidenceFill"
+                                    class="confidence-fill"
+                                    style="width: 0%"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONSEJO -->
+                    <div
+                        class="advice-card"
+                        id="adviceCard"
+                    >
+
+                        <div class="advice-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <span>
+                                RECOMENDACIÓN
+                            </span>
+
+                            <p id="adviceText">
+                                Colócate frente a la cámara.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INFO -->
+                    <div class="info-grid">
+
+                        <div class="info-card">
+
+                            <span class="info-label">
+                                PROYECTO
+                            </span>
+
+                            <strong>
+                                HELMET AI
+                            </strong>
+
+                            <p>
+                                Clasificación visual de implementos de seguridad.
+                            </p>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span class="info-label">
+                                TECNOLOGÍA
+                            </span>
+
+                            <strong>
+                                YOLO + ONNX
+                            </strong>
+
+                            <p>
+                                Modelo de IA ejecutado directamente en el navegador.
+                            </p>
+
+                        </div>
+
+
+                        <div class="info-card student-card">
+
+                            <span class="info-label">
+                                ESTUDIANTE
+                            </span>
+
+                            <strong>
+                                Braulio J. Velasquez H.
+                            </strong>
+
+                            <p>
+                                Ingeniería de Software e IA
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TECNOLOGÍAS -->
+                    <div class="technology-row">
+
+                        <span>
+                            YOLO26
+                        </span>
+
+                        <span>
+                            ONNX
+                        </span>
+
+                        <span>
+                            OpenCV
+                        </span>
+
+                        <span>
+                            IA
+                        </span>
+
+                    </div>
+
+                </aside>
+
+            </section>
+
+
+            <!-- =================================================
+                 FOOTER STATUS
+            ================================================== -->
+            <section class="status-strip">
+
+                <div class="status-item helmet-status">
+
+                    <span class="status-symbol">
+                        ✓
+                    </span>
+
+                    <div>
+                        <strong>
+                            CASCO
+                        </strong>
+
+                        <small>
+                            Protección detectada
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="status-item nohelmet-status">
+
+                    <span class="status-symbol">
+                        !
+                    </span>
+
+                    <div>
+                        <strong>
+                            SIN CASCO
+                        </strong>
+
+                        <small>
+                            Requiere protección
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="status-item verify-status">
+
+                    <span class="status-symbol">
+                        ?
+                    </span>
+
+                    <div>
+                        <strong>
+                            VERIFICAR
+                        </strong>
+
+                        <small>
+                            Confianza insuficiente
+                        </small>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+        <footer class="footer">
+
+            <div>
+                HELMET AI
+            </div>
+
+            <span>
+                Sistema académico de clasificación visual mediante inteligencia artificial.
+            </span>
+
+            <div>
+                SENATI · 2026
+            </div>
+
+        </footer>
+
+    </div>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>

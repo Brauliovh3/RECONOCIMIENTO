@@ -1,0 +1,72 @@
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Datasets (all dataset directories)
+dataset/
+dataset_real/
+dataset_real_cls/
+dataset_detection/
+dataset_augmented/
+datasets/
+**/dataset/**
+**/dataset_real/**
+**/dataset_real_cls/**
+**/dataset_detection/**
+**/dataset_augmented/**
+**/datasets/**
+
+# Cache files
+*.cache
+*.lock
+
+# Modelos .pt (PyTorch) - solo keeping ONNX for web
+*.pt
+yolo26n.pt
+yolo26n-cls.pt
+
+# Entrenamiento y resultados
+runs/
+runs/**
+train_results/
+outputs/
+wandb/
+mlruns/
+
+# Modelos de entrenamiento (raíz, no web/)
+/model/
+/model/**
+/model/casco_classifier/
+/model/casco_classifier_v2/
+/model/casco_classifier_v4/
+/model/casco_detection_v3/
+
+# Caches y temporales
+.cache/
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Archivos de desarrollo
+camera_v3.py
+camera.py
+camera_v4.py
+*.log
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Archivos grandes
+*.zip
+*.tar.gz
+*.rar
+
+# Backend Python (no se usa en Vercel)
+web/app.py
